@@ -1,10 +1,10 @@
 import './App.css'
-
+import FrontPage from './pages/FrontPage'
 function App() {
 
   return (
     <>
-      <p>wefowe</p>
+      <FrontPage />
     </>
   )
 }
