@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import President from "./pages/President";
 import FacultyCoordinator from "./pages/FacultyCoordinator";
+import ClubInfo from "./pages/ClubInfo";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/president" element={<President />} />
         <Route path="/faculty-coordinator" element={<FacultyCoordinator />} />
+        <Route path="/club/:clubName/:role" element={<ClubInfo />} />
       </Routes>
     </Router>
   );

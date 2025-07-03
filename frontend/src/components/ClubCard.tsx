@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 interface ClubCardProps {
   logo: string;
   clubName: string;
   memberCount: number;
-  role:string
+  role: string;
   onClick: () => void;
 }
 
@@ -11,7 +13,6 @@ export default function ClubCard({
   clubName,
   memberCount,
   role,
-  onClick,
 }: ClubCardProps) {
   return (
     <div className="w-64 bg-[#121821] border border-[#00ffe0] rounded-xl p-4 shadow-lg">
@@ -26,17 +27,17 @@ export default function ClubCard({
           <span className="text-[#00ffe0]">👥</span>
           <span>{memberCount} Members</span>
         </div>
-        <button
-          onClick={onClick}
-          className="px-4 py-2 border border-[#00ffe0] rounded-full hover:bg-[#00ffe010] transition text-sm"
+        <Link
+          to={`/club/${encodeURIComponent(clubName)}/${role}`}
+          className="px-4 py-2 border border-[#00ffe0] rounded-full hover:bg-[#00ffe010] transition text-sm text-center"
         >
           {role === "president"
             ? "Manage"
             : role === "faculty_coordinator"
             ? "View"
             : "Open"}
-        </button>
-      </div>
+        </Link>
+      </div> 
     </div>
   );
 }
