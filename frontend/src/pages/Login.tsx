@@ -8,22 +8,40 @@ export default function Login() {
 
   const navigate=useNavigate();
 
-  const handleLogin = (e:any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
-    
-    console.log("Logging in as", userid,password);
 
-    if (role == "admin") {
-      navigate("/admin");
-    } else if (role == "president") {
-      navigate("/president");
-    } else if (role == "faculty") {
-      navigate("/faculty-coordinator");
+    try {
+      const res = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userid, password, role }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      // Route based on role
+      if (role === "admin") {
+        navigate("/admin");
+      } else if (role === "president") {
+        navigate("/president");
+      } else if (role === "faculty") {
+        navigate("/faculty-coordinator");
+      }
+
+      setPassword("");
+      setUserid("");
+    } catch (err) {
+      console.error("Login Error:", err);
+      alert("Server error. Try again.");
     }
-    
-    setPassword("");
-    setUserid("")
   };
+  
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#00ffe0] flex items-center justify-center">
