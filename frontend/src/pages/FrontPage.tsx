@@ -1,10 +1,9 @@
 import vit_logo from "../assets/vit_logo.png";
-
-const handleSubmit = () => {
-  console.log("ref");
-};
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#00ffe0] flex items-center justify-center">
       <div className="flex flex-col items-center">
@@ -30,7 +29,7 @@ export default function Landing() {
         <div className="mt-8">
           <button
             className="text-xl text-[#00ffe0] border border-[#00ffe0] rounded-full px-6 py-2 hover:bg-[#00ffe010] transition cursor-pointer"
-            onClick={handleSubmit}
+            onClick={() => navigate("/login")}
           >
             Login / Signup
           </button>
