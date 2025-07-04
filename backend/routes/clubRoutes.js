@@ -23,4 +23,9 @@ router.delete("/deletemember", clubController.deleteMember);
 
 router.put("/editclub", clubController.editClub);
 
+router.get("/presidentClubs/:regno", clubController.getClubsByPresident);
+
+router.get("/coordinatorClubs/:empid", clubController.getClubsForCoordinator);
+
+
 module.exports = router;

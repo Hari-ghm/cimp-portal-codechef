@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
 
 interface ClubCardProps {
-  logo: string;
+  clubId: string; // ✅ Add this
   clubName: string;
   memberCount: number;
   role: string;
-  onClick: () => void;
 }
 
 export default function ClubCard({
-  logo,
+  clubId,
   clubName,
   memberCount,
   role,
@@ -18,7 +17,6 @@ export default function ClubCard({
     <div className="w-64 bg-[#121821] border border-[#00ffe0] rounded-xl p-4 shadow-lg">
       <div className="flex flex-col items-center">
         <img
-          src={logo}
           alt="Club Logo"
           className="w-24 h-24 rounded-full mb-4 border-2 border-[#00ffe0]"
         />
@@ -28,7 +26,7 @@ export default function ClubCard({
           <span>{memberCount} Members</span>
         </div>
         <Link
-          to={`/club/${encodeURIComponent(clubName)}/${role}`}
+          to={`/club/${clubId}/${role}`} // ✅ Use UUID here
           className="px-4 py-2 border border-[#00ffe0] rounded-full hover:bg-[#00ffe010] transition text-sm text-center"
         >
           {role === "president"
@@ -37,7 +35,7 @@ export default function ClubCard({
             ? "View"
             : "Open"}
         </Link>
-      </div> 
+      </div>
     </div>
   );
 }

@@ -450,5 +450,37 @@ exports.editClub = async (req, res) => {
   }
 };
 
+exports.getClubsByPresident = async (req, res) => {
+  const { regno } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT * FROM club WHERE president_regno = $1`,
+      [regno]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET clubs where empid is the faculty_coordinator
+exports.getClubsForCoordinator = async (req, res) => {
+  const { empid } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM club WHERE faculty_coordinator_empid = $1`,
+      [empid]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Error fetching coordinator clubs:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
 
 

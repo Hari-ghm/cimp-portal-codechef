@@ -29,9 +29,17 @@ export default function Login() {
       if (role === "admin") {
         navigate("/admin");
       } else if (role === "president") {
-        navigate("/president");
+        navigate("/president", {
+          state: {
+            regno: userid, 
+          },
+        });
       } else if (role === "faculty") {
-        navigate("/faculty-coordinator");
+        navigate("/faculty-coordinator", {
+          state: {
+            empid: userid, 
+          },
+        });
       }
 
       setPassword("");

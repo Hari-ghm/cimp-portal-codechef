@@ -1,65 +1,70 @@
 import { FiLogOut } from "react-icons/fi";
 import ClubCard from "../components/ClubCard";
 import vit_logo from "../assets/vit_logo.png";
-import cyscom_logo from "../assets/cyscom_logo.jpeg";
-import codechef_logo from "../assets/codechef_logo.png";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import type { Club } from "../../types";
 
 export default function President() {
-    const handleLogout = () => {
-      // perform logout logic here
-      console.log("User signed out");
-    };
+  const location = useLocation();
+  const regno = location.state?.regno;
+  const [clubs, setClubs] = useState<Club[]>([]);
 
-    const handleViewModify = (clubName: string) => {
-      console.log("View/Modify clicked for", clubName);
-      // navigate or open modal etc.
-    };
+  const fetchClubsForPresident = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/clubs/presidentClubs/${regno}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch clubs");
+      const data = await response.json();
+      setClubs(data);
+    } catch (err) {
+      console.error("Error fetching president clubs:", err);
+    }
+  };
 
-    const clubs = [
-      {
-        clubName: "Code chef",
-        memberCount: 42,
-        logo: codechef_logo,
-      },
-      {
-        clubName: "Cyscom",
-        memberCount: 30,
-        logo: cyscom_logo,
-      },
-    ];
+  useEffect(() => {
+    fetchClubsForPresident();
+  }, [regno]);
+
+  const handleLogout = () => {
+    console.log("User signed out");
+  };
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#00ffe0]">
-      <div className="min-w-screen h-28 p-5 flex justify-between items-center">
-        <div className="flex items-center">
-          <img src={vit_logo} className="w-20 h-20" />
-          <div className="text-3xl font-bold tracking-wide text-teal-50 px-3">
+    <div className="min-h-screen bg-[#0d1117] text-[#00ffe0] flex flex-col">
+      {/* Header */}
+      <div className="w-full flex flex-col md:flex-row justify-between items-center p-4 md:p-6">
+        <div className="flex items-center mb-4 md:mb-0">
+          <img src={vit_logo} className="w-16 h-16 md:w-20 md:h-20" />
+          <div className="text-2xl md:text-3xl font-bold tracking-wide text-teal-50 px-3">
             CIMP
           </div>
         </div>
 
         <button
           onClick={handleLogout}
-          className="text-[#00ffe0] hover:text-red-400 transition text-3xl mr-10"
+          className="text-[#00ffe0] hover:text-red-400 transition text-2xl md:text-3xl"
           title="Sign Out"
         >
           <FiLogOut />
         </button>
       </div>
 
-      <div className="min-w-screen h-10 p-5 flex items-center justify-center mb-10">
-        <span className="text-5xl font-bold pb-12">PRESIDENT DASHBOARD</span>
+      {/* Title */}
+      <div className="text-center py-6">
+        <h1 className="text-2xl md:text-5xl font-bold md:-mt-10">PRESIDENT DASHBOARD</h1>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-8 px-10">
+      {/* Centered Cards */}
+      <div className="flex flex-wrap justify-center gap-8 px-4 pb-10">
         {clubs.map((club) => (
           <ClubCard
-            key={club.clubName}
-            logo={club.logo}
-            clubName={club.clubName}
-            memberCount={club.memberCount}
-            role="president"
-            onClick={() => handleViewModify(club.clubName)}
+            key={club.club_id}
+            clubId={club.club_id}
+            clubName={club.name}
+            memberCount={club.total_members}
+            role="faculty_coordinator"
           />
         ))}
       </div>
