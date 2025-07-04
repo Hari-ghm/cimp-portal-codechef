@@ -6,6 +6,7 @@ import Admin from "./pages/Admin";
 import President from "./pages/President";
 import FacultyCoordinator from "./pages/FacultyCoordinator";
 import ClubInfo from "./pages/ClubInfo";
+import "./index.css";
 
 function App() {
   return (
