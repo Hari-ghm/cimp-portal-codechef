@@ -13,7 +13,7 @@ export interface Faculty {
 }
 
 export interface Club {
-  clubid: number;
+  club_id: string;
   name: string;
   president_regno: string; 
   president_name:string;
@@ -27,5 +27,6 @@ export interface Club {
 export interface ClubMember {
   clubid: number;
   regno: string; 
-  doj: string;
+  joined_on: string;
+  name:string
 }

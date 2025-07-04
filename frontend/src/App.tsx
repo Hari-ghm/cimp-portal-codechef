@@ -16,7 +16,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/president" element={<President />} />
         <Route path="/faculty-coordinator" element={<FacultyCoordinator />} />
-        <Route path="/club/:clubName/:role" element={<ClubInfo />} />
+        <Route path="/club/:club_id/:role" element={<ClubInfo />} />
       </Routes>
     </Router>
   );

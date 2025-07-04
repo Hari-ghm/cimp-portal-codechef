@@ -19,20 +19,20 @@ export default function Admin() {
   });
 
   const [clubs, setClubs] = useState<Club[]>([]);
-  useEffect(() => {
-    const fetchClubs = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/api/clubs");
-        if (!response.ok) {
-          throw new Error("Failed to fetch clubs");
-        }
-        const data = await response.json();
-        setClubs(data);
-      } catch (err) {
-        console.error("Failed to fetch clubs:", err);
+  const fetchClubs = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/clubs");
+      if (!response.ok) {
+        throw new Error("Failed to fetch clubs");
       }
-    };
+      const data = await response.json();
+      setClubs(data);
+    } catch (err) {
+      console.error("Failed to fetch clubs:", err);
+    }
+  };
 
+  useEffect(() => {
     fetchClubs();
   }, []);
 
@@ -107,6 +107,7 @@ export default function Admin() {
 
       const data = await response.json();
       const newClub = data.club;
+      fetchClubs();
 
       setGeneratedPasswords(data.passwords); // <-- show the popup
       setClubs((prev) => [...prev, newClub]);
@@ -121,6 +122,31 @@ export default function Admin() {
       console.error("Error creating club:", err);
     }
   }
+  
+  const handleDeleteClub = async (clubId: string) => {
+    if (!window.confirm("Are you sure you want to delete this club?")) return;
+    console.log(clubId)
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/clubs/delete/${clubId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Delete failed");
+      }
+
+      setClubs((prev) => prev.filter((club) => club.club_id!== clubId));
+      alert("Club deleted successfully");
+      fetchClubs();
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Error deleting club");
+    }
+  };
   
 
   return (
@@ -180,7 +206,7 @@ export default function Admin() {
           </thead>
           <tbody>
             {clubs.map((club, index) => (
-              <tr key={club.clubid} className="border-t border-[#00ffe0]">
+              <tr key={club.club_id} className="border-t border-[#00ffe0]">
                 <td className="py-2 px-4">{index + 1}</td>
                 <td className="py-2 px-4">{club.name}</td>
                 <td className="py-2 px-4">{club.president_name}</td>
@@ -188,14 +214,17 @@ export default function Admin() {
                 <td className="py-2 px-4">{club.total_members}</td>
                 <td className="py-2 px-4">
                   <Link
-                    to={`/club/${encodeURIComponent(club.name)}/admin`}
+                    to={`/club/${encodeURIComponent(club.club_id)}/admin`}
                     className="px-4 py-2 border border-[#00ffe0] rounded-full hover:bg-[#00ffe010] transition text-sm text-center"
                   >
                     Manage
                   </Link>
                 </td>
                 <td className="py-2 px-4">
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 cursor-pointer">
+                  <button
+                    onClick={() => handleDeleteClub(club.club_id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 cursor-pointer"
+                  >
                     Delete
                   </button>
                 </td>
@@ -316,7 +345,7 @@ export default function Admin() {
             </div>
           </div>
         </div>
-      )} 
+      )}
     </div>
   );
 }

@@ -1,42 +1,200 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import vit_logo from "../assets/vit_logo.png";
 import codechef_logo from "../assets/codechef_logo.png";
+import type { Club, Faculty, Student,ClubMember } from "../../types";
 
 export default function ClubInfo() {
-  const { clubName, role } = useParams();
-
-  // Club Details Object
-  const clubDetails = {
-    president: "Aryan Singh",
-    facultyCoordinator: "Dr. Meena Iyer",
-    totalMembers: 42,
-    createdOn: "2022-01-15", // Must be in YYYY-MM-DD for input[type=date]
-    description: "Hi this is club",
-  };
-
+  const { club_id, role } = useParams();
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
+
+  const [club, setClub] = useState<Club | null>(null);
+
+  const fetchClub = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/clubs/getparticularclub/${club_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch club");
+      }
+      const data = await response.json();
+      setClub(data);
+    } catch (err) {
+      console.error("Failed to fetch club:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchClub();
+  }, [club_id]);
+  
   const [memberFormData, setMemberFormData] = useState({
     name: "",
     regNo: "",
-    doj: "",
   });
 
   const [editData, setEditData] = useState({
-    president: clubDetails.president,
-    facultyCoordinator: clubDetails.facultyCoordinator,
-    createdOn: clubDetails.createdOn,
-    description: clubDetails.description,
+    president: club?.president_name,
+    facultyCoordinator: club?.faculty_coordinator_empid,
+    description: club?.description,
   });
 
-  const presidents = ["Aryan Singh", "John Doe", "Priya Sharma"];
-  const facultyCoordinators = [
-    "Dr. Meena Iyer",
-    "Prof. Rakesh Nair",
-    "Dr. Kavita Rao",
-  ];
+  const [students, setStudents] = useState<Student[]>([]);
+    useEffect(() => {
+      const fetchStudents = async () => {
+        try {
+          const response = await fetch("http://localhost:3001/api/clubs/getstudents");
+          if (!response.ok) {
+            throw new Error("Failed to fetch clubs");
+          }
+          const data = await response.json();
+          setStudents(data)
+        } catch (err) {
+          console.error("Failed to fetch clubs:", err);
+        }
+      };
+  
+      fetchStudents();
+    }, []);
+  
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  useEffect(() => {
+      const fetchFaculties = async () => {
+        try {
+          const response = await fetch(
+            "http://localhost:3001/api/clubs/getfaculties"
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch clubs");
+          }
+          const data = await response.json();
+          setFaculties(data);
+        } catch (err) {
+          console.error("Failed to fetch clubs:", err);
+        }
+      };
+
+      fetchFaculties();
+    }, []
+  );
+
+   const [members, setMembers] = useState<ClubMember[]>([]);
+   const fetchMembers = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/clubs/members/${club_id}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch members");
+        const data = await response.json();
+        setMembers(data);
+      } catch (err) {
+        console.error("Error fetching members:", err);
+      }
+    };
+
+    useEffect(() => {
+      fetchMembers();
+    }, [club_id]
+  );
+
+  const handleAddMemberSubmit = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/clubs/addmember",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            regno: memberFormData.regNo,
+            club_id: club_id, 
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to add member");
+
+      const data = await response.json();
+      console.log("Member added:", data);
+
+      setShowMemberModal(false);
+      setMemberFormData({ name: "", regNo: "" });
+
+       fetchMembers();
+    } catch (err) {
+      console.error("Error adding member:", err);
+    }
+  };
+  
+  const handleDeleteMember = async (regno: string) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/clubs/deletemember",
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ regno, club_id }), // club_id should come from state or props
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete member");
+
+      const data = await response.json();
+      window.alert("Deleted member successfully");
+
+      
+       fetchMembers();
+    } catch (err) {
+      console.error("Error deleting member:", err);
+    }
+  };
+  
+  const handleEditSubmit = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/clubs/editClub",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            club_id: club_id,
+            newPresident: editData.president,
+            newCoordinator: editData.facultyCoordinator,
+            newDescription: editData.description,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update club");
+
+      const data = await response.json();
+
+      if (
+        data.passwords &&
+        (data.passwords.president || data.passwords.coordinator)
+      ) {
+        setUpdatedPasswords(data.passwords); // Trigger modal
+      }
+
+      console.log("Club updated successfully:", data);
+
+      fetchClub();
+      fetchMembers();
+    } catch (err) {
+      console.error("Error updating club:", err);
+    }
+  };
+  
+  
+  const [updatedPasswords, setUpdatedPasswords] = useState<{
+    president?: string;
+    coordinator?: string;
+  } | null>(null);
+  
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#00ffe0]">
@@ -52,7 +210,9 @@ export default function ClubInfo() {
 
       {/* Club Name */}
       <div className="w-full h-10 p-5 flex items-center justify-center -mt-4">
-        <span className="text-5xl font-bold pb-12 capitalize">{clubName}</span>
+        <span className="text-5xl font-bold pb-12 capitalize">
+          {club?.name}
+        </span>
       </div>
 
       {/* Club Info Card */}
@@ -69,30 +229,32 @@ export default function ClubInfo() {
           <div className="ml-10 text-left text-white space-y-2 text-lg">
             <p>
               <span className="font-semibold text-amber-300">President:</span>{" "}
-              {clubDetails.president}
+              {club?.president_name}
             </p>
             <p>
               <span className="font-semibold text-amber-300">
                 Faculty Coordinator:
               </span>{" "}
-              {clubDetails.facultyCoordinator}
+              {club?.coordinator_name}
             </p>
             <p>
               <span className="font-semibold text-amber-300">
                 Total Members:
               </span>{" "}
-              {clubDetails.totalMembers}
+              {club?.total_members}
             </p>
             <p>
               <span className="font-semibold text-amber-300">Created On:</span>{" "}
-              {clubDetails.createdOn}
+              {club?.created_on
+                ? club.created_on.slice(0, 10).split("-").reverse().join("-")
+                : ""}
             </p>
           </div>
         </div>
 
         {/* Description Box */}
         <div className="bg-transparent border-4 border-amber-400 w-72 h-48 rounded-2xl shadow-lg ml-5 p-3 text-xl text-white">
-          {clubDetails.description}
+          {club?.description}
         </div>
       </div>
 
@@ -129,17 +291,30 @@ export default function ClubInfo() {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-t border-[#00ffe0]">
-              <td className="py-2 px-4">1</td>
-              <td className="py-2 px-4">John Doe</td>
-              <td className="py-2 px-4">45261</td>
-              <td className="py-2 px-4">12 / 01 / 24</td>
-              <td className="py-2 px-4">
-                <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 cursor-pointer">
-                  Delete
-                </button>
-              </td>
-            </tr>
+            {members.map((member, index) => (
+              <tr key={member.regno} className="border-t border-[#00ffe0]">
+                <td className="py-2 px-4">{index + 1}</td>
+                <td className="py-2 px-4">{member.name}</td>
+                <td className="py-2 px-4">{member.regno}</td>
+                <td className="py-2 px-4">
+                  {member?.joined_on
+                    ? member.joined_on
+                        .slice(0, 10)
+                        .split("-")
+                        .reverse()
+                        .join("-")
+                    : ""}
+                </td>
+                <td className="py-2 px-4">
+                  <button
+                    onClick={() => handleDeleteMember(member.regno)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -153,37 +328,34 @@ export default function ClubInfo() {
             </h2>
 
             <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Name"
+              <select
                 value={memberFormData.name}
-                onChange={(e) =>
-                  setMemberFormData({ ...memberFormData, name: e.target.value })
-                }
+                onChange={(e) => {
+                  const selectedName = e.target.value;
+                  const selectedStudent = students.find(
+                    (s) => s.name === selectedName
+                  );
+                  setMemberFormData({
+                    name: selectedName,
+                    regNo: selectedStudent?.regno || "",
+                  });
+                }}
                 className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
-              />
+              >
+                <option value="">Select Name</option>
+                {students.map((student, index) => (
+                  <option key={index} value={student.name}>
+                    {student.name}
+                  </option>
+                ))}
+              </select>
+
               <input
                 type="text"
                 placeholder="Reg. No"
                 value={memberFormData.regNo}
-                onChange={(e) =>
-                  setMemberFormData({
-                    ...memberFormData,
-                    regNo: e.target.value,
-                  })
-                }
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
-              />
-              <input
-                type="date"
-                value={memberFormData.doj}
-                onChange={(e) =>
-                  setMemberFormData({
-                    ...memberFormData,
-                    doj: e.target.value,
-                  })
-                }
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
+                disabled
+                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600 opacity-70 cursor-not-allowed"
               />
             </div>
 
@@ -196,10 +368,7 @@ export default function ClubInfo() {
               </button>
               <button
                 className="bg-cyan-400 hover:bg-cyan-500 text-black px-4 py-2 rounded"
-                onClick={() => {
-                  console.log("Submitted member:", memberFormData);
-                  // submit logic
-                }}
+                onClick={handleAddMemberSubmit}
               >
                 Submit
               </button>
@@ -225,10 +394,10 @@ export default function ClubInfo() {
                 }
                 className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
               >
-                <option value="">Select President</option>
-                {presidents.map((pres, idx) => (
-                  <option key={idx} value={pres}>
-                    {pres}
+                <option value="">{club?.president_name}</option>
+                {students.map((student) => (
+                  <option key={student.regno} value={student.regno}>
+                    {student.name}
                   </option>
                 ))}
               </select>
@@ -239,28 +408,18 @@ export default function ClubInfo() {
                 onChange={(e) =>
                   setEditData({
                     ...editData,
-                    facultyCoordinator: e.target.value,
+                    facultyCoordinator: Number(e.target.value),
                   })
                 }
                 className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
               >
-                <option value="">Select Faculty Coordinator</option>
-                {facultyCoordinators.map((fac, idx) => (
-                  <option key={idx} value={fac}>
-                    {fac}
+                <option value="">{club?.coordinator_name}</option>
+                {faculties.map((faculty) => (
+                  <option key={faculty.empid} value={faculty.empid}>
+                    {faculty.name}
                   </option>
                 ))}
               </select>
-
-              {/* Created On (Date) */}
-              <input
-                type="date"
-                value={editData.createdOn}
-                onChange={(e) =>
-                  setEditData({ ...editData, createdOn: e.target.value })
-                }
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
-              />
 
               {/* Description */}
               <textarea
@@ -271,7 +430,9 @@ export default function ClubInfo() {
                 }
                 className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
                 placeholder="Club Description"
-              ></textarea>
+              >
+                {club?.description}
+              </textarea>
             </div>
 
             {/* Modal Action Buttons */}
@@ -284,12 +445,45 @@ export default function ClubInfo() {
               </button>
               <button
                 className="bg-cyan-400 hover:bg-cyan-500 text-black px-4 py-2 rounded"
-                onClick={() => {
-                  console.log("Updated club data:", editData);
-                  // Optional: Submit to backend
-                }}
+                onClick={handleEditSubmit}
               >
                 Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {updatedPasswords && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-black">
+            <h2 className="text-xl font-bold mb-4 text-center">
+              New Credentials
+            </h2>
+
+            {updatedPasswords.president && (
+              <div className="mb-2">
+                <strong>President Password:</strong>{" "}
+                {updatedPasswords.president}
+              </div>
+            )}
+
+            {updatedPasswords.coordinator && (
+              <div className="mb-2">
+                <strong>Coordinator Password:</strong>{" "}
+                {updatedPasswords.coordinator}
+              </div>
+            )}
+
+            <div className="text-sm text-red-500 mt-4">
+              Please copy these passwords safely. You won't see them again.
+            </div>
+
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setUpdatedPasswords(null)}
+                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+              >
+                Close
               </button>
             </div>
           </div>
