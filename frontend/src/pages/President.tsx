@@ -13,7 +13,7 @@ export default function President() {
   const fetchClubsForPresident = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/clubs/presidentClubs/${regno}`
+        `https://cimp-backend.onrender.com/api/clubs/presidentClubs/${regno}`
       );
       if (!response.ok) throw new Error("Failed to fetch clubs");
       const data = await response.json();

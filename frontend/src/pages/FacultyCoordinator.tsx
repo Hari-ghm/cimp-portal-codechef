@@ -14,7 +14,7 @@ export default function FacultyCoordinator() {
   const fetchClubsForCoordinator = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/clubs/coordinatorClubs/${empid}`
+        `https://cimp-backend.onrender.com/api/clubs/coordinatorClubs/${empid}`
       );
       if (!response.ok) throw new Error("Failed to fetch clubs");
       const data = await response.json();

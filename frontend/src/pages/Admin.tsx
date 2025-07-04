@@ -21,7 +21,9 @@ export default function Admin() {
   const [clubs, setClubs] = useState<Club[]>([]);
   const fetchClubs = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/clubs");
+      const response = await fetch(
+        "https://cimp-backend.onrender.com/api/clubs"
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch clubs");
       }
@@ -40,7 +42,9 @@ export default function Admin() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/clubs/getstudents");
+        const response = await fetch(
+          "https://cimp-backend.onrender.com/api/clubs/getstudents"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch clubs");
         }
@@ -59,7 +63,7 @@ export default function Admin() {
     const fetchFaculties = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3001/api/clubs/getfaculties"
+          "https://cimp-backend.onrender.com/api/clubs/getfaculties"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch clubs");
@@ -86,7 +90,7 @@ export default function Admin() {
     event.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost:3001/api/clubs/createClub",
+        "https://cimp-backend.onrender.com/api/clubs/createClub",
         {
           method: "POST",
           headers: {
@@ -128,7 +132,7 @@ export default function Admin() {
     console.log(clubId)
     try {
       const res = await fetch(
-        `http://localhost:3001/api/clubs/delete/${clubId}`,
+        `https://cimp-backend.onrender.com/api/clubs/delete/${clubId}`,
         {
           method: "DELETE",
         }

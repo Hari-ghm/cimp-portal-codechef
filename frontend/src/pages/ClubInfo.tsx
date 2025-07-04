@@ -15,7 +15,7 @@ export default function ClubInfo() {
   const fetchClub = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/clubs/getparticularclub/${club_id}`
+        `https://cimp-backend.onrender.com/api/clubs/getparticularclub/${club_id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch club");
@@ -46,7 +46,9 @@ export default function ClubInfo() {
     useEffect(() => {
       const fetchStudents = async () => {
         try {
-          const response = await fetch("http://localhost:3001/api/clubs/getstudents");
+          const response = await fetch(
+            "https://cimp-backend.onrender.com/api/clubs/getstudents"
+          );
           if (!response.ok) {
             throw new Error("Failed to fetch clubs");
           }
@@ -65,7 +67,7 @@ export default function ClubInfo() {
       const fetchFaculties = async () => {
         try {
           const response = await fetch(
-            "http://localhost:3001/api/clubs/getfaculties"
+            "https://cimp-backend.onrender.com/api/clubs/getfaculties"
           );
           if (!response.ok) {
             throw new Error("Failed to fetch clubs");
@@ -85,7 +87,7 @@ export default function ClubInfo() {
    const fetchMembers = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/clubs/members/${club_id}`
+          `https://cimp-backend.onrender.com/api/clubs/members/${club_id}`
         );
         if (!response.ok) throw new Error("Failed to fetch members");
         const data = await response.json();
@@ -103,13 +105,13 @@ export default function ClubInfo() {
   const handleAddMemberSubmit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/clubs/addmember",
+        "https://cimp-backend.onrender.com/api/clubs/addmember",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             regno: memberFormData.regNo,
-            club_id: club_id, 
+            club_id: club_id,
           }),
         }
       );
@@ -131,7 +133,7 @@ export default function ClubInfo() {
   const handleDeleteMember = async (regno: string) => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/clubs/deletemember",
+        "https://cimp-backend.onrender.com/api/clubs/deletemember",
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -154,7 +156,7 @@ export default function ClubInfo() {
   const handleEditSubmit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/clubs/editClub",
+        "https://cimp-backend.onrender.com/api/clubs/editClub",
         {
           method: "PUT",
           headers: {
