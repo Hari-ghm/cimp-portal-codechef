@@ -210,23 +210,22 @@ export default function ClubInfo() {
 
       {/* Club Name */}
       <div className="w-full h-10 p-5 flex items-center justify-center -mt-4">
-        <span className="text-5xl font-bold pb-12 capitalize">
+        <span className="text-3xl sm:text-4xl md:text-5xl font-bold pb-12 capitalize text-center">
           {club?.name}
         </span>
       </div>
 
       {/* Club Info Card */}
-      <div className="flex justify-center mb-8">
-        {/* Main Info */}
-        <div className="bg-transparent border-4 border-amber-400 w-full max-w-xl h-48 rounded-2xl shadow-lg flex items-center px-6">
-          <div className="flex-shrink-0">
+      <div className="flex flex-col lg:flex-row justify-center items-center mb-8 px-4 gap-5">
+        <div className="bg-transparent border-4 border-amber-400 w-full max-w-xl h-fit lg:h-48 rounded-2xl shadow-lg flex flex-col lg:flex-row items-center px-6 py-4">
+          <div className="flex-shrink-0 mb-4 lg:mb-0">
             <img
               src={codechef_logo}
-              className="w-32 h-32 rounded-full object-cover border-4 border-white"
+              className="w-24 h-24 lg:w-32 lg:h-32 rounded-full object-cover border-4 border-white"
               alt="Club Logo"
             />
           </div>
-          <div className="ml-10 text-left text-white space-y-2 text-lg">
+          <div className="lg:ml-10 text-left text-white space-y-2 text-sm sm:text-base">
             <p>
               <span className="font-semibold text-amber-300">President:</span>{" "}
               {club?.president_name}
@@ -252,22 +251,26 @@ export default function ClubInfo() {
           </div>
         </div>
 
-        {/* Description Box */}
-        <div className="bg-transparent border-4 border-amber-400 w-72 h-48 rounded-2xl shadow-lg ml-5 p-3 text-xl text-white">
+        <div className="bg-transparent border-4 border-amber-400 
+            w-full sm:w-3/4 md:w-60 
+            h-16 md:h-32 
+            rounded-2xl shadow-lg 
+            p-2 md:p-3 
+            text-sm md:text-base 
+            text-white">
           {club?.description}
         </div>
       </div>
 
-      <div className="flex justify-end max-w-6xl w-full mx-auto mb-4">
+      <div className="flex justify-end max-w-6xl w-full mx-auto mb-4 px-4">
         {role === "admin" && (
           <button
             onClick={() => setShowEditModal(true)}
-            className="bg-cyan-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-cyan-300 transition duration-200 mr-5"
+            className="bg-cyan-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-cyan-300 transition duration-200 mr-4"
           >
             Edit Club Details
           </button>
         )}
-
         {(role === "admin" || role === "president") && (
           <button
             onClick={() => setShowMemberModal(true)}
@@ -279,8 +282,8 @@ export default function ClubInfo() {
       </div>
 
       {/* Members Table */}
-      <div className="flex justify-center">
-        <table className="w-11/12 max-w-6xl text-center text-white border border-[#00ffe0]">
+      <div className="overflow-x-auto px-4">
+        <table className="w-full max-w-6xl mx-auto text-center text-white border border-[#00ffe0] text-sm sm:text-base">
           <thead className="bg-[#00ffe0] text-black">
             <tr>
               <th className="py-2 px-4 border border-[#0d1117]">S. No</th>

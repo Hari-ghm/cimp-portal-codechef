@@ -7,7 +7,7 @@ import type { Club } from "../../types";
 
 export default function FacultyCoordinator() {
   const location = useLocation();
-  const empid = location.state?.empid; // ✅ use empid
+  const empid = location.state?.empid;
   const navigate = useNavigate();
 
   const [clubs, setClubs] = useState<Club[]>([]);
@@ -15,7 +15,7 @@ export default function FacultyCoordinator() {
   const fetchClubsForCoordinator = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/clubs/coordinatorClubs/${empid}` // ✅ new endpoint
+        `http://localhost:3001/api/clubs/coordinatorClubs/${empid}`
       );
       if (!response.ok) throw new Error("Failed to fetch clubs");
       const data = await response.json();
@@ -37,8 +37,9 @@ export default function FacultyCoordinator() {
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#00ffe0]">
-      <div className="min-w-screen h-28 p-5 flex justify-between items-center">
-        <div className="flex items-center">
+      {/* Header */}
+      <div className="w-full h-28 px-5 flex flex-col md:flex-row justify-between items-center">
+        <div className="flex items-center mb-4 md:mb-0">
           <img src={vit_logo} className="w-20 h-20" />
           <div className="text-3xl font-bold tracking-wide text-teal-50 px-3">
             CIMP
@@ -47,27 +48,29 @@ export default function FacultyCoordinator() {
 
         <button
           onClick={handleLogout}
-          className="text-[#00ffe0] hover:text-red-400 transition text-3xl mr-10"
+          className="text-[#00ffe0] hover:text-red-400 transition text-3xl"
           title="Sign Out"
         >
           <FiLogOut />
         </button>
       </div>
 
-      <div className="min-w-screen h-10 p-5 flex items-center justify-center mb-10">
-        <span className="text-5xl font-bold pb-12">
+      {/* Title */}
+      <div className="w-full p-5 flex items-center justify-center mb-6">
+        <span className="text-2xl md:text-5xl font-bold md:-mt-10">
           FACULTY COORDINATOR DASHBOARD
         </span>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-8 px-10">
+      {/* Club Cards */}
+      <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 px-4 sm:px-8">
         {clubs.map((club) => (
           <ClubCard
             key={club.club_id}
             clubId={club.club_id}
             clubName={club.name}
             memberCount={club.total_members}
-            role="faculty_coordinator" // ✅ correct role
+            role="faculty_coordinator"
           />
         ))}
       </div>

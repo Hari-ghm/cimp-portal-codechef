@@ -171,11 +171,13 @@ export default function Admin() {
 
       {/* Title */}
       <div className="min-w-screen h-10 p-5 flex items-center justify-center mb-10">
-        <span className="text-5xl font-bold pb-12">ADMIN DASHBOARD</span>
+        <span className="text-3xl sm:text-4xl md:text-5xl font-bold pb-12 text-center">
+          ADMIN DASHBOARD
+        </span>
       </div>
 
       {/* Create Button */}
-      <div className="flex items-end justify-end mb-5 pr-32">
+      <div className="flex items-end justify-end mb-5 px-4 sm:pr-32">
         <button
           onClick={() => setShowCreateModal(true)}
           className="bg-[#00ffe0] text-black font-semibold px-6 py-2 rounded hover:bg-[#00ffe099] transition"
@@ -185,8 +187,8 @@ export default function Admin() {
       </div>
 
       {/* Club Table */}
-      <div className="flex justify-center">
-        <table className="w-11/12 text-center text-white border border-[#00ffe0]">
+      <div className="flex justify-center px-2 overflow-x-auto">
+        <table className="w-full max-w-screen-lg text-center text-white border border-[#00ffe0] text-sm sm:text-base">
           <thead className="bg-[#00ffe0] text-black">
             <tr>
               <th className="py-2 px-4 border border-[#0d1117]">S. No</th>
@@ -248,7 +250,7 @@ export default function Admin() {
                 onChange={(e) =>
                   setCreateFormData({ ...createFormData, name: e.target.value })
                 }
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
+                className="w-full text-sm p-2 rounded bg-[#1a1f2c] border border-gray-600"
               />
 
               <select
@@ -259,7 +261,7 @@ export default function Admin() {
                     president: e.target.value,
                   })
                 }
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
+                className="w-full text-sm p-2 rounded bg-[#1a1f2c] border border-gray-600"
               >
                 <option value="">Select President</option>
                 {students.map((student) => (
@@ -277,7 +279,7 @@ export default function Admin() {
                     facultyCoordinator: e.target.value,
                   })
                 }
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
+                className="w-full text-sm p-2 rounded bg-[#1a1f2c] border border-gray-600"
               >
                 <option value="">Select Faculty Coordinator</option>
                 {faculties.map((faculty) => (
@@ -297,7 +299,7 @@ export default function Admin() {
                   })
                 }
                 rows={3}
-                className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
+                className="w-full text-sm p-2 rounded bg-[#1a1f2c] border border-gray-600"
               ></textarea>
             </div>
 
