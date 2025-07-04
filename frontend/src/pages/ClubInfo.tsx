@@ -141,7 +141,7 @@ export default function ClubInfo() {
 
       if (!response.ok) throw new Error("Failed to delete member");
 
-      const data = await response.json();
+      //const data = await response.json();
       window.alert("Deleted member successfully");
 
       

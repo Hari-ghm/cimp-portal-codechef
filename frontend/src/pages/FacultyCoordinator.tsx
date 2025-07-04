@@ -1,14 +1,13 @@
 import { FiLogOut } from "react-icons/fi";
 import ClubCard from "../components/ClubCard";
 import vit_logo from "../assets/vit_logo.png";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Club } from "../../types";
 
 export default function FacultyCoordinator() {
   const location = useLocation();
   const empid = location.state?.empid;
-  const navigate = useNavigate();
 
   const [clubs, setClubs] = useState<Club[]>([]);
 
