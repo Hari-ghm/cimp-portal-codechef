@@ -9,7 +9,7 @@ import ClubInfo from "./pages/ClubInfo";
 
 function App() {
   return (
-    <Router basename="/cimp-portal-codechef">
+    <Router>
       <Routes>
         <Route path="/" element={<FrontPage />} />
         <Route path="/login" element={<Login />} />
@@ -21,5 +21,6 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;
