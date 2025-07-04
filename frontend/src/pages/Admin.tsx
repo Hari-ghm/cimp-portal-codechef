@@ -1,19 +1,14 @@
 import { FiLogOut } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import vit_logo from "../assets/vit_logo.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { Club,Student,Faculty} from "../../types";
 
 export default function Admin() {
+
   const handleLogout = () => {
     console.log("User signed out");
   };
-  
-  const presidents = ["Aryan Singh", "John Doe", "Priya Sharma"];
-  const facultyCoordinators = [
-    "Dr. Meena Iyer",
-    "Prof. Rakesh Nair",
-    "Dr. Kavita Rao",
-  ];
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createFormData, setCreateFormData] = useState({
@@ -23,31 +18,110 @@ export default function Admin() {
     description: "",
   });
 
+  const [clubs, setClubs] = useState<Club[]>([]);
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/clubs");
+        if (!response.ok) {
+          throw new Error("Failed to fetch clubs");
+        }
+        const data = await response.json();
+        setClubs(data);
+      } catch (err) {
+        console.error("Failed to fetch clubs:", err);
+      }
+    };
 
+    fetchClubs();
+  }, []);
 
-  const clubs = [
-    {
-      id: 1,
-      name: "CodeChef",
-      president: "John Doe",
-      facultyCoordinator: "Dr. Smith",
-      noOfStudents: 42,
-    },
-    {
-      id: 2,
-      name: "Cyscom",
-      president: "Jane Smith",
-      facultyCoordinator: "Dr. Iyer",
-      noOfStudents: 30,
-    },
-    {
-      id: 3,
-      name: "Google DSC",
-      president: "Arjun Reddy",
-      facultyCoordinator: "Dr. Nirmala",
-      noOfStudents: 55,
-    },
-  ];
+  const [students, setStudents] = useState<Student[]>([]);
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/clubs/getstudents");
+        if (!response.ok) {
+          throw new Error("Failed to fetch clubs");
+        }
+        const data = await response.json();
+        setStudents(data)
+      } catch (err) {
+        console.error("Failed to fetch clubs:", err);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  useEffect(() => {
+    const fetchFaculties = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/clubs/getfaculties"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch clubs");
+        }
+        const data = await response.json();
+        setFaculties(data);
+      } catch (err) {
+        console.error("Failed to fetch clubs:", err);
+      }
+    };
+
+    fetchFaculties();
+  }, []);
+  
+
+  const [generatedPasswords, setGeneratedPasswords] = useState<{
+    president: string;
+    coordinator: string;
+  } | null>(null);
+  
+  async function handleSubmit(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): Promise<void> {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/clubs/createClub",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: createFormData.name,
+            president: createFormData.president,
+            faculty_coordinator: createFormData.facultyCoordinator,
+            description: createFormData.description,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create club");
+      }
+
+      const data = await response.json();
+      const newClub = data.club;
+
+      setGeneratedPasswords(data.passwords); // <-- show the popup
+      setClubs((prev) => [...prev, newClub]);
+      setShowCreateModal(false);
+      setCreateFormData({
+        name: "",
+        president: "",
+        facultyCoordinator: "",
+        description: "",
+      });
+    } catch (err) {
+      console.error("Error creating club:", err);
+    }
+  }
+  
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#00ffe0]">
@@ -106,12 +180,12 @@ export default function Admin() {
           </thead>
           <tbody>
             {clubs.map((club, index) => (
-              <tr key={club.id} className="border-t border-[#00ffe0]">
+              <tr key={club.clubid} className="border-t border-[#00ffe0]">
                 <td className="py-2 px-4">{index + 1}</td>
                 <td className="py-2 px-4">{club.name}</td>
-                <td className="py-2 px-4">{club.president}</td>
-                <td className="py-2 px-4">{club.facultyCoordinator}</td>
-                <td className="py-2 px-4">{club.noOfStudents}</td>
+                <td className="py-2 px-4">{club.president_name}</td>
+                <td className="py-2 px-4">{club.coordinator_name}</td>
+                <td className="py-2 px-4">{club.total_members}</td>
                 <td className="py-2 px-4">
                   <Link
                     to={`/club/${encodeURIComponent(club.name)}/admin`}
@@ -159,9 +233,9 @@ export default function Admin() {
                 className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
               >
                 <option value="">Select President</option>
-                {presidents.map((pres, i) => (
-                  <option key={i} value={pres}>
-                    {pres}
+                {students.map((student) => (
+                  <option key={student.regno} value={student.regno}>
+                    {student.name}
                   </option>
                 ))}
               </select>
@@ -177,9 +251,9 @@ export default function Admin() {
                 className="w-full p-2 rounded bg-[#1a1f2c] border border-gray-600"
               >
                 <option value="">Select Faculty Coordinator</option>
-                {facultyCoordinators.map((fac, i) => (
-                  <option key={i} value={fac}>
-                    {fac}
+                {faculties.map((faculty) => (
+                  <option key={faculty.empid} value={faculty.empid}>
+                    {faculty.name}
                   </option>
                 ))}
               </select>
@@ -207,10 +281,7 @@ export default function Admin() {
               </button>
               <button
                 className="bg-cyan-400 hover:bg-cyan-500 text-black px-4 py-2 rounded"
-                onClick={() => {
-                  console.log("Create Club Data:", createFormData);
-                  // send createFormData to backend if needed
-                }}
+                onClick={handleSubmit}
               >
                 Submit
               </button>
@@ -218,6 +289,34 @@ export default function Admin() {
           </div>
         </div>
       )}
+      {generatedPasswords && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg text-black max-w-sm w-full">
+            <h2 className="text-xl font-bold mb-4 text-center">
+              Passwords Generated
+            </h2>
+            <p>
+              <strong>President Password:</strong>{" "}
+              {generatedPasswords.president}
+            </p>
+            <p>
+              <strong>Coordinator Password:</strong>{" "}
+              {generatedPasswords.coordinator}
+            </p>
+            <p className="text-red-600 font-semibold mt-2">
+              Please copy these passwords now.
+            </p>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                onClick={() => setGeneratedPasswords(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )} 
     </div>
   );
 }

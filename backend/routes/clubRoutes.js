@@ -6,6 +6,10 @@ const clubController = require("../controllers/clubController");
 router.get("/", clubController.getAllClubs);
 
 // POST new club
-router.post("/create", clubController.createClub);
+router.post("/createClub", clubController.createClub);
+
+router.get("/getstudents", clubController.getAllStudents);
+
+router.get("/getfaculties", clubController.getAllFaculties);
 
 module.exports = router;
