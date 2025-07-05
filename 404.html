@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; url=/cimp-portal-codechef/" />
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+    <script>
+      const redirectPath = location.pathname + location.search + location.hash;
+      sessionStorage.setItem("redirectPath", redirectPath);
+      location.replace("/cimp-portal-codechef/");
+    </script>
   </head>
   <body></body>
 </html>
