@@ -1,7 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta http-equiv="refresh" content="0; url=/cimp-portal-codechef/" />
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+    <script>
+      // Store original full path
+      sessionStorage.setItem("redirectPath", window.location.pathname + window.location.search + window.location.hash);
+      // Redirect to root index.html so React can take over
+      window.location.replace("/cimp-portal-codechef/");
+    </script>
   </head>
   <body></body>
 </html>
