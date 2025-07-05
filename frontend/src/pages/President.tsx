@@ -24,7 +24,9 @@ export default function President() {
   };
 
   useEffect(() => {
+    if (regno){
     fetchClubsForPresident();
+    }
   }, [regno]);
 
   const handleLogout = () => {

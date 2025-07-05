@@ -9,7 +9,7 @@ router.post("/createClub", clubController.createClub);
 
 router.get("/getstudents", clubController.getAllStudents);
 
-router.get("/getfaculties", clubController.getAllFaculties);
+router.get("/getfa  culties", clubController.getAllFaculties);
 
 router.delete("/delete/:clubId", clubController.deleteClub);
 

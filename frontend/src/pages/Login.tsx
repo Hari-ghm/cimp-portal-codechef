@@ -99,9 +99,6 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-8 text-sm sm:text-base text-left w-full max-w-[60vh]">
-          Don't have an account??
-        </div>
       </div>
     </div>
   );
